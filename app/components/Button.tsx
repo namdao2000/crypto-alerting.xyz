@@ -9,7 +9,7 @@ export const Button: React.FC<any> = ({
   onClick?: () => void;
 }) => {
   return (
-    <button className={styles.button}>
+    <button onClick={onClick} className={styles.button}>
       {children}
     </button>
   );

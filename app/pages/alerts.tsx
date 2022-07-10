@@ -4,16 +4,22 @@ import Footer from '../components/Footer';
 import useSWR from 'swr';
 import { fetcher } from '../lib/utils/utils';
 import AlertCard from '../components/AlertCard';
+import AlertBox from '../components/AlertBox';
 
 const Alerts: NextPage = () => {
   const { data, error } = useSWR('/api/subscriptions', fetcher);
 
   console.log(data);
+  const list = ['Hello', 'World'];
+
   return (
     <div>
       <Header />
-      Alerts Page
-      <AlertCard alert={{ text: 'hello world' }} />
+      <AlertBox>
+        {list.map((item, index) => {
+          return <AlertCard key={index} alert={{ text: item }} />;
+        })}
+      </AlertBox>
       <Footer />
     </div>
   );

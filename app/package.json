@@ -9,10 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "prettier": "pretty-quick --staged",
-    "vercel-build": "next build",
-    "prisma:init": "prisma init",
-    "prisma:migrate": "prisma migrate dev --preview-feature",
-    "prisma:generate": "prisma generate"
+    "vercel-build": "next build"
   },
   "dependencies": {
     "@emotion/react": "^11.9.3",

@@ -15,8 +15,9 @@ export default NextAuth({
   session: { strategy: 'jwt' as any },
   callbacks: {
     async session({ session, user, token }) {
-      session.user = user;
-      session.token = token;
+      if (user) {
+        session.user = user;
+      }
       return session;
     },
     async jwt({ token, user }) {
