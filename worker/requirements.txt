@@ -1,0 +1,4 @@
+python-dotenv
+motor
+ccxt
+sendgrid

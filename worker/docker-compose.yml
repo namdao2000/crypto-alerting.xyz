@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  db:
+    hostname: mongo
+    image: mongo:latest
+    env_file:
+      - .env
+
+    ports:
+        - 27017:27017
+    volumes:
+        - ./data/db:/data/db
+
+  worker:
+    build:
+      context: .
+      dockerfile: worker.Dockerfile
+    volumes:
+      - .:/app
+      - /etc/localtime:/etc/localtime
+    links:
+      - db
+    depends_on:
+      - db
+    env_file:
+      - .env
+
+

@@ -1,1 +1,6 @@
 .idea
+worker/data
+worker/venv
+.env
+*__pycache__
+node_modules
