@@ -2,13 +2,28 @@ import os
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
-FROM_EMAIL = os.environ.get('FROM_EMAIL')
+from dotenv import load_dotenv, find_dotenv
 
 
 class EmailClient:
 
     def __init__(self):
-        self._client = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+        load_dotenv()
+
+        sendgrid_api_key = os.getenv('SENDGRID_API_KEY')
+        from_email = os.getenv('FROM_EMAIL')
+        template_id = os.getenv('SENDGRID_TEMPLATE_ID')
+
+        if sendgrid_api_key is None:
+            raise Exception("Sendgrid API key is not set")
+        if from_email is None:
+            raise Exception("From email is not set")
+        if template_id is None:
+            raise Exception("Template ID is not set")
+
+        self._client = SendGridAPIClient(sendgrid_api_key)
+        self._from_email = from_email
+        self._template_id = template_id
 
     def send_email(self, subscription: dict, price: float):
         """
@@ -16,41 +31,71 @@ class EmailClient:
         """
         try:
 
-            mail = build_email(subscription, price)
+            mail = self.build_dynamic_email(subscription, price)
             response = self._client.send(mail)
 
-            if (response.status_code == 202):
-                print(f"[EMAIL_THREAD] Email sent to: {subscription['email']}")
+            if response.status_code == 202:
+                print(f"[ALERT_THREAD] Email sent to: {subscription['email']}")
 
-            if (response.status_code != 202):
-                print(f"[EMAIL_THREAD] Email failed to send to: {subscription['email']}")
+            if response.status_code != 202:
+                print(f"[ALERT_THREAD] Email failed to send to: {subscription['email']}")
         except Exception as e:
-            print(e.message)
+            print(e)
             return False
         return True
 
+    def build_dynamic_email(self, subscription: dict, price: float):
+        """
+        Builds an email to be sent to the user.
+        """
+        subject = None
+        body = None
+        mail = None
 
-def build_email(subscription: dict, price: float):
-    """
-    Builds an email to be sent to the user.
-    """
-    subject = None
-    body = None
+        if subscription['alertType'] == "LISTING":
+            subject = f"{subscription['ticker']} listed on {subscription['exchange']}"
+            body = f"{subscription['ticker']} has been listed on {subscription['exchange']} at {price}"
+            mail = Mail(
+                from_email=self._from_email,
+                to_emails=subscription['email'],
+                subject=subject,
+                html_content=body
+            )
+        else:
+            mail = Mail(
+                from_email=self._from_email,
+                to_emails=subscription['email'],
+            )
+            mail.dynamic_template_data = {
+                'alertType': subscription['alertType'],
+                'ticker': subscription['ticker'],
+                'price': subscription['threshold'],
+            }
+            mail.template_id = self._template_id
 
-    if subscription['alertType'] is "LISTING":
-        subject = f"{subscription['ticker']} listed on {subscription['exchange']}"
-        body = f"{subscription['ticker']} has been listed on {subscription['exchange']} at {price}"
+        return mail
 
-    if subscription['alertType'] is "ABOVE":
-        subject = f"{subscription['ticker']} is above {subscription['price']}"
-        body = f"{subscription['ticker']} is above {subscription['price']} at {price}"
-    if subscription['alertType'] is "BELOW":
-        subject = f"{subscription['ticker']} is below {subscription['price']}"
-        body = f"{subscription['ticker']} is below {subscription['price']} at {price}"
+    def build_email(self, subscription: dict, price: float):
+        """
+        Builds an email to be sent to the user.
+        """
+        subject = None
+        body = None
 
-    return Mail(
-        from_email=FROM_EMAIL,
-        to_emails=subscription['email'],
-        subject=subject,
-        html_content=body
-    )
+        if subscription['alertType'] == "LISTING":
+            subject = f"{subscription['ticker']} listed on {subscription['exchange']}"
+            body = f"{subscription['ticker']} has been listed on {subscription['exchange']} at {price}"
+
+        if subscription['alertType'] == "ABOVE":
+            subject = f"{subscription['ticker']} is above {subscription['threshold']}"
+            body = f"{subscription['ticker']} is above {subscription['threshold']} at {price}"
+        if subscription['alertType'] == "BELOW":
+            subject = f"{subscription['ticker']} is below {subscription['threshold']}"
+            body = f"{subscription['ticker']} is below {subscription['threshold']} at {price}"
+
+        return Mail(
+            from_email=self._from_email,
+            to_emails=subscription['email'],
+            subject=subject,
+            html_content=body
+        )

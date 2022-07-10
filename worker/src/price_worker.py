@@ -8,6 +8,7 @@ from utils import globals
 from utils.utils import is_stale, convert_symbol
 from db.pricedb import DBClient
 from utils.email_helper import EmailClient
+from utils.sms_helper import SMSClient
 
 
 class CCXTClient:
@@ -25,31 +26,43 @@ class CCXTClient:
     def get_price(self, coin, exchange):
         ticker: str = convert_symbol(coin, exchange)
         price = self.clients[exchange].fetch_ticker(ticker)['last']
-        return price
+        return float(price)
 
 
 def handle_alert_task(subscription: dict, price: float):
+
+    if subscription['_id'] in globals.currently_updating_subscriptions:
+        return
+
     alert_task = {
         'subscription': subscription,
         'price': price
     }
-    # Check if alert has been sent in the last 5 minutes
-    if not is_stale(subscription['lastAlerted'], timedelta(minutes=5)):
+
+    # Check if alert has been disabled
+    if subscription['enabled'] is False:
         return
+    # Check if last alerted has been sent in the last 5 minutes
+    if subscription['lastAlerted'] is not None:
+        if not is_stale(subscription['lastAlerted'], timedelta(minutes=subscription['alertFrequency'])):
+            return
+
     # If alert is of type listing and a price has been retrieved
-    if subscription['alertType'] is "LISTING" and price is not None:
+    if subscription['alertType'] == "LISTING" and price is not None:
+        globals.currently_updating_subscriptions.add(subscription['_id'])
         globals.alert_queue.put(alert_task)
 
-    if subscription['alertType'] is "PRICE":
-        # Below case
-        if subscription['alert']['when'] is "BELOW":
-            if price < subscription['threshold']:
-                globals.alert_queue.put(alert_task)
-        # Above case
-        if subscription['alert']['when'] is "ABOVE":
-            if price > subscription['threshold']:
-                globals.alert_queue.put(alert_task)
-        # Equal case ???
+    # Below case
+    if subscription['alertType'] == "BELOW":
+        if price < float(subscription['threshold']):
+            globals.currently_updating_subscriptions.add(subscription['_id'])
+            globals.alert_queue.put(alert_task)
+    # Above case
+    if subscription['alertType'] == "ABOVE":
+        if price > float(subscription['threshold']):
+            globals.currently_updating_subscriptions.add(subscription['_id'])
+            globals.alert_queue.put(alert_task)
+    # Equal case ???
 
 
 class Worker:
@@ -65,9 +78,9 @@ class Worker:
                 subscriptions = await self.db.get_subscriptions(coin['ticker'], coin['exchange'])
 
                 if is_stale(coin['lastUpdated'],
-                            timedelta(seconds=10)) \
-                        and f"{coin['ticker']}-{coin['exchange']}" not in globals.currently_updating:
-                    globals.currently_updating.add(f'{coin["ticker"]}-{coin["exchange"]}')
+                            timedelta(seconds=30)) \
+                        and f"{coin['ticker']}-{coin['exchange']}" not in globals.currently_updating_prices:
+                    globals.currently_updating_prices.add(f'{coin["ticker"]}-{coin["exchange"]}')
                     globals.update_price_queue.put(coin)
                     continue
 
@@ -87,12 +100,13 @@ class PriceThread(threading.Thread):
     async def run_async(self):
         self.db_client: DBClient = DBClient()
         self.ccxt_client: CCXTClient = CCXTClient()
+        loop = asyncio.get_event_loop()
         while True:
             task = globals.update_price_queue.get()
             print(f"[COIN_THREAD] updating {task['ticker']}'s price on {task['exchange']}. {datetime.datetime.now()}")
-            new_price = self.ccxt_client.get_price(task['ticker'], task['exchange'])  # get price from ccxt
-            await self.db_client.update_price(task['ticker'], task['exchange'], new_price)
-            globals.currently_updating.remove(f'{task["ticker"]}-{task["exchange"]}')
+            price = self.ccxt_client.get_price(task['ticker'], task['exchange'])  # get price from ccxt
+            await self.db_client.update_price(task['ticker'], task['exchange'], price)
+            globals.currently_updating_prices.remove(f'{task["ticker"]}-{task["exchange"]}')
 
     def run(self):
         loop = asyncio.new_event_loop()
@@ -108,15 +122,36 @@ class AlertThread(threading.Thread):
         threading.Thread.__init__(self, daemon=True)
         self.db_client = None
         self.email_client = None
+        self.sms_client = None
 
     async def run_async(self):
         self.db_client: DBClient = DBClient()
         self.email_client: EmailClient = EmailClient()
+        self.sms_client: SMSClient = SMSClient()
         while True:
             task = globals.alert_queue.get()
-            if task['subscription']['sendEmail']:
-                self.email_client.send_email(task['subscription'], task['price'])
-            print(f"[ALERT_THREAD] sending alert for {task['ticker']}.")
+            price = task['price']
+            subscription = task['subscription']
+            alert_sent = False
+            print(f"[ALERT_THREAD] sending alert for {subscription['ticker']}.")
+
+            if 'email' in subscription:
+                alert_sent = self.email_client.send_email(subscription, price)
+
+            if 'phone' in subscription:
+                alert_sent = self.sms_client.send_sms(subscription, price)
+
+            if alert_sent:
+                await self.update_subscription(subscription)
+
+    async def update_subscription(self, subscription: dict):
+        updated_subscription = subscription
+        updated_subscription['lastAlerted'] = datetime.datetime.now().isoformat()
+        if updated_subscription['disableAfterAlert']:
+            updated_subscription['enabled'] = False
+        await self.db_client.update_subscription(updated_subscription)
+        globals.currently_updating_subscriptions.remove(subscription['_id'])
+
 
     def run(self):
         loop = asyncio.new_event_loop()

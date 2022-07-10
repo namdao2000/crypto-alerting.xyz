@@ -1,0 +1,28 @@
+.Container {
+    display: flex;
+    justify-content: center;
+    border-radius: 0 0 0.25rem 0.25rem;
+}
+
+.AlertCard {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: var(--max-container-width);
+    padding: 24px;
+    background-color: var(--primary-accents-1);
+    border-radius: 0.25rem;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.25);
+}
+
+.AlertCardText {
+    font-family: var(--main-font);
+    font-size: var(--largest-font-size);
+    font-weight: bold;
+    color: var(--primary-foreground);
+    text-align: center;
+
+}
+

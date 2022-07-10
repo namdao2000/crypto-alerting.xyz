@@ -22,7 +22,7 @@ MONG_USER = os.getenv('MONGO_URL')
 
 class DBClient:
 
-    def __init__(self, host: str = "mongo"):
+    def __init__(self, host: str = "mongo", test=False):
         self.client = motor_asyncio.AsyncIOMotorClient(f'mongodb://{host}:27017/', username='admin',
                                                        password='admin')
 
@@ -30,8 +30,9 @@ class DBClient:
 
         # # if dev env, drop collection
         # if os.getenv('ENV') == 'dev':
-        self.db["subscriptions"].drop()
-        self.db["price_cache"].drop()
+        if not test:
+            self.db["subscriptions"].drop()
+            self.db["price_cache"].drop()
 
         self.subscription_table = self.db["subscriptions"]
         self.price_cache= self.db["price_cache"]

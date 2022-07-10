@@ -2,3 +2,4 @@ python-dotenv
 motor
 ccxt
 sendgrid
+twilio

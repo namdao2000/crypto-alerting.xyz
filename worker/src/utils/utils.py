@@ -5,6 +5,7 @@ from .exceptions import ExchangeSymbolNotImplemented
 
 
 def is_stale(last_updated: str, expiry_delta: timedelta) -> bool:
+
     last_updated_dt = datetime.strptime(last_updated, '%Y-%m-%dT%H:%M:%S.%f')
 
     if last_updated_dt < datetime.now() - expiry_delta:

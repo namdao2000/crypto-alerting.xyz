@@ -42,7 +42,7 @@ async def insert_price(client: DBClient, doc: dict):
 
 
 async def async_main():
-    client = DBClient(host="localhost")
+    client = DBClient(host="localhost", test=True)
     for data in dummy_data:
         print("inserting price: ", data)
         await insert_price(client, data)

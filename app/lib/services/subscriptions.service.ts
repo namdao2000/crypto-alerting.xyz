@@ -2,16 +2,17 @@ import dbConnect from '../utils/mongoose';
 import Subscriptions from '../repositories/subscriptions.repository';
 
 export type Subscription = {
-  subscriptionType: string;
+  alertType: string;
   email?: string;
   phone?: string;
   ticker: string;
   exchange: string;
-  price?: number;
-  when?: string;
-  notifFrequency: number;
+  threshold?: number;
+  alertFrequency: number;
   ipAddress?: string;
-  disableAfterTrigger?: boolean;
+  disableAfterAlert?: boolean;
+  enabled?: boolean;
+  lastAlerted?: Date;
 };
 
 export const SubscriptionsService = {

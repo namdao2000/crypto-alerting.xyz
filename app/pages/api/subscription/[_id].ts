@@ -23,15 +23,15 @@ export default async function handle(
 
     case 'PATCH':
       const schema = Joi.object({
-        subscriptionType: Joi.string(),
+        alertType: Joi.string(),
         email: Joi.string(),
         phone: Joi.string(),
         ticker: Joi.string(),
         exchange: Joi.string(),
-        price: Joi.number(),
-        when: Joi.string(),
-        notifFrequency: Joi.number(),
-        disableAfterTrigger: Joi.boolean(),
+        threshold: Joi.number(),
+        alertFrequency: Joi.number(),
+        disableAfterAlert: Joi.boolean(),
+        enabled: Joi.boolean(),
       });
       await validate(schema, body, res);
       await SubscriptionsService.updateSubscription(_id as string, email, body);

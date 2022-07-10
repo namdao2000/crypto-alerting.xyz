@@ -1,9 +1,9 @@
 import * as mongoose from 'mongoose';
 
 const SubscriptionsSchema = new mongoose.Schema({
-  subscriptionType: {
+  alertType: {
     type: String,
-    enum: ['PRICE', 'LISTING'],
+    enum: ['PRICE', 'LISTING', 'ABOVE'],
     required: true,
   },
   email: {
@@ -14,37 +14,35 @@ const SubscriptionsSchema = new mongoose.Schema({
   },
   ticker: {
     type: String,
-    required: true
+    required: true,
   },
   exchange: {
     type: String,
-    required: true
+    required: true,
   },
-  price: {
+  threshold: {
     type: Number,
   },
-  when: {
-    type: String,
-    enum : ['ABOVE', 'BELOW'],
-  },
-  notifFrequency: {
+
+  alertFrequency: {
     type: Number, // In seconds
-    required: true
+    required: true,
   },
-  lastReminded: {
+  lastAlerted: {
     type: Date,
   },
   ipAddress: {
     type: String, // Prevent people from creating too many subscriptions. Will implement later.
   },
-  disableAfterTrigger: {
+  disableAfterAlert: {
     type: Boolean,
     default: false,
   },
-  isDisabled: {
+  enabled: {
     type: Boolean,
-    default: false,
-  }
-})
+    default: true,
+  },
+});
 
-export default mongoose.models.Subscriptions || mongoose.model('Subscriptions', SubscriptionsSchema)
+export default mongoose.models.Subscriptions ||
+  mongoose.model('Subscriptions', SubscriptionsSchema);
