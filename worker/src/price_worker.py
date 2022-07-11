@@ -28,6 +28,9 @@ class CCXTClient:
         price = self.clients[exchange].fetch_ticker(ticker)['last']
         return float(price)
 
+    def get_all_symbols(self, exchange):
+        return self.clients[exchange].symbols
+
 
 def handle_alert_task(subscription: dict, price: float):
 
@@ -43,7 +46,7 @@ def handle_alert_task(subscription: dict, price: float):
     if subscription['enabled'] is False:
         return
     # Check if last alerted has been sent in the last 5 minutes
-    if subscription['lastAlerted'] is not None:
+    if 'lastAlerted' not in subscription and subscription['lastAlerted'] is not None:
         if not is_stale(subscription['lastAlerted'], timedelta(minutes=subscription['alertFrequency'])):
             return
 
@@ -77,9 +80,9 @@ class Worker:
             for coin in coin_list:
                 subscriptions = await self.db.get_subscriptions(coin['ticker'], coin['exchange'])
 
-                if is_stale(coin['lastUpdated'],
+                if (coin['enabled'] and coin['lastUpdated'] is None )or (coin['enabled'] and is_stale(coin['lastUpdated'],
                             timedelta(seconds=30)) \
-                        and f"{coin['ticker']}-{coin['exchange']}" not in globals.currently_updating_prices:
+                        and f"{coin['ticker']}-{coin['exchange']}" not in globals.currently_updating_prices):
                     globals.currently_updating_prices.add(f'{coin["ticker"]}-{coin["exchange"]}')
                     globals.update_price_queue.put(coin)
                     continue
@@ -97,10 +100,26 @@ class PriceThread(threading.Thread):
         self.db_client = None
         self.ccxt_client = None
 
+    async def add_symbols_to_db(self):
+
+        for exchange in self.ccxt_client.clients.keys():
+            tasks = []
+
+            _symbols = self.ccxt_client.clients[exchange].fetch_tickers()
+            symbols = {symbol.split('/')[0] for symbol in _symbols}
+            for symbol in symbols:
+                tasks.append(self.db_client.add_symbol(symbol, exchange))
+
+            await asyncio.gather(*tasks)
+            print('finished adding {} coins to db'.format(exchange))
+
     async def run_async(self):
         self.db_client: DBClient = DBClient()
         self.ccxt_client: CCXTClient = CCXTClient()
         loop = asyncio.get_event_loop()
+
+        await self.add_symbols_to_db()
+
         while True:
             task = globals.update_price_queue.get()
             print(f"[COIN_THREAD] updating {task['ticker']}'s price on {task['exchange']}. {datetime.datetime.now()}")
@@ -135,14 +154,17 @@ class AlertThread(threading.Thread):
             alert_sent = False
             print(f"[ALERT_THREAD] sending alert for {subscription['ticker']}.")
 
-            if 'email' in subscription:
+            if [subscription['notificationType']] == "EMAIL":
                 alert_sent = self.email_client.send_email(subscription, price)
 
-            if 'phone' in subscription:
+            if [subscription['notificationType']] == "SMS":
                 alert_sent = self.sms_client.send_sms(subscription, price)
 
             if alert_sent:
-                await self.update_subscription(subscription)
+                if subscription['disableAfterTrigger'] is True:
+                    await self.db_client.delete_subscription(subscription['_id'])
+                else:
+                    await self.update_subscription(subscription)
 
     async def update_subscription(self, subscription: dict):
         updated_subscription = subscription

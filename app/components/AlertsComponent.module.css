@@ -1,0 +1,40 @@
+.Container {
+    padding: 30px 20px 20px 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.OuterCard {
+    max-width: var(--max-container-width);
+    width: var(--max-container-width);
+    padding: 20px;
+    background-color: var(--primary-accents-1);
+    border-radius: 10px;
+}
+
+.FormCard {
+    padding: 20px;
+    background-color: var(--primary-background);
+    border-radius: 10px !important;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+    font-size: var(--smaller-font-size);
+}
+
+.Title {
+    font-weight: bold;
+    font-size: 48px;
+}
+
+.Subtitle {
+    font-size: var(--smaller-font-size);
+    margin-bottom: 10px;
+}
+
+.TrashButton {
+    cursor: pointer;
+    color: var(--primary-accents-5);
+}
+
+.TrashButton:hover {
+    color: var(--primary-foreground);
+}

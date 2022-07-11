@@ -3,7 +3,12 @@ import * as mongoose from 'mongoose';
 const SubscriptionsSchema = new mongoose.Schema({
   alertType: {
     type: String,
-    enum: ['PRICE', 'LISTING', 'ABOVE'],
+    enum: ['LISTING', 'ABOVE', 'BELOW'],
+    required: true,
+  },
+  notificationType: {
+    type: String,
+    enum: ['EMAIL', 'SMS'],
     required: true,
   },
   email: {

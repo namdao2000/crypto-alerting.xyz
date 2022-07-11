@@ -1,7 +1,10 @@
 import dbConnect from '../utils/mongoose';
 import Subscriptions from '../repositories/subscriptions.repository';
+import { CoinData, CoinDataService } from './coindata.service';
 
 export type Subscription = {
+  _id?: string;
+  __v?: any;
   alertType: string;
   email?: string;
   phone?: string;
@@ -13,6 +16,7 @@ export type Subscription = {
   disableAfterAlert?: boolean;
   enabled?: boolean;
   lastAlerted?: Date;
+  notificationType: string;
 };
 
 export const SubscriptionsService = {
@@ -25,17 +29,18 @@ export const SubscriptionsService = {
     await dbConnect();
     return await Subscriptions.find({ email }).exec();
   },
-  async deleteSubscription(_id: string, email: string): Promise<void> {
+  async deleteSubscription(data: Partial<Subscription>): Promise<void> {
     await dbConnect();
-    await Subscriptions.deleteOne({ _id, email });
+    await Subscriptions.deleteOne({ _id: data._id });
   },
 
-  async updateSubscription(
-    _id: string,
-    email: string,
-    data: Partial<Subscription>
-  ): Promise<void> {
+  async updateSubscription(data: Partial<Subscription>): Promise<void> {
     await dbConnect();
-    await Subscriptions.updateOne({ _id, email }, data);
+    await Subscriptions.updateOne({ _id: data._id }, data);
+  },
+
+  async getNumSubscriptions(email: string): Promise<Number> {
+    await dbConnect();
+    return Subscriptions.countDocuments({ email: email });
   },
 };

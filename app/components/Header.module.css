@@ -40,4 +40,6 @@
     font-size: var(--largestt-font-size);
     font-weight: bold;
     cursor: pointer;
+    display: block;
+    white-space:nowrap;
 }

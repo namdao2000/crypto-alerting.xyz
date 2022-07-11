@@ -8,9 +8,12 @@ jeremy_no = "+61456001525"
 nam_no = "+61403890999"
 anthony_no = "+61422174234"
 
+jeremy_email = "jrmyok@pm.me"
+jeremy_gmail = "okjeremy1@gmail.com"
+
 dummy_data = [
     {
-        "email": "jrmyok@pm.me",
+        "email": jeremy_gmail,
         "phone": nam_no,
         "ticker": "BTC",
         "exchange": "BINANCE",
@@ -19,9 +22,10 @@ dummy_data = [
         "disableAfterAlert": True,
         "enabled": True,
         "lastAlerted": None,
+        "notificationType": "EMAIL"
     },
     {
-        "email": "jrmyok@pm.me",
+        "email": jeremy_gmail,
         "phone": nam_no,
         "ticker": "ETH",
         "exchange": "FTX",
@@ -30,7 +34,9 @@ dummy_data = [
         "disableAfterAlert": False,
         "enabled": True,
         "lastAlerted": None,
-        "alertFrequency": 10
+        "alertFrequency": 10,
+        "notificationType": "EMAIL"
+
     },
 ]
 

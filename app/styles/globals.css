@@ -8,6 +8,7 @@ body {
 :root {
     --main-font: 'DM Sans', sans-serif;
     --max-container-width: 1100px;
+    --large-title-font-size: 48px;
     --title-font-size: 36px;
     --largestt-font-size: 24px;
     --largest-font-size: 22px;

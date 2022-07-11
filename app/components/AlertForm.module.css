@@ -1,0 +1,73 @@
+.Container {
+    padding: 30px 20px 20px 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.OuterCard {
+    padding: 20px;
+    max-width: var(--max-container-width);
+    width: var(--max-container-width);
+    background-color: var(--primary-accents-1);
+    border-radius: 10px;
+}
+
+.FormCard {
+    padding: 20px;
+    background-color: var(--primary-background);
+    min-height: 550px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.2);
+    font-size: var(--smaller-font-size);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.SelectionCard {
+    padding: 20px;
+    background-color: var(--primary-background);
+    border-radius: 10px;
+    font-size: var(--smaller-font-size);
+    border: 2px solid var(--primary-accents-2);
+}
+
+.FormContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.Title {
+    font-weight: bold;
+    font-size: var(--large-title-font-size);
+    text-align: left;
+}
+
+.TitleSubtext {
+}
+
+.FormTitleSection {
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--primary-accents-2);
+    font-weight: bold;
+    font-size: var(--smaller-font-size);
+}
+
+@media (max-width: 600px) {
+    .OuterCard {
+        padding: 10px;
+    }
+
+    .Title {
+        font-weight: bold;
+        font-size: var(--title-font-size);
+        text-align: center;
+    }
+
+    .TitleSubtext {
+        text-align: center;
+    }
+}

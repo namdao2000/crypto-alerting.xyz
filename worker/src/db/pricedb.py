@@ -24,18 +24,18 @@ class DBClient:
 
     def __init__(self, host: str = "mongo", test=False):
         self.client = motor_asyncio.AsyncIOMotorClient(f'mongodb://{host}:27017/', username='admin',
-                                                       password='admin')
-
-        self.db = self.client["database"]
+                                                       password='admin', authSource='admin')
+        # mongodb: // admin: admin @ localhost:27017 / admin
+        self.db = self.client["admin"]
 
         # # if dev env, drop collection
         # if os.getenv('ENV') == 'dev':
         if not test:
             self.db["subscriptions"].drop()
-            self.db["price_cache"].drop()
+            self.db["coinData"].drop()
 
         self.subscription_table = self.db["subscriptions"]
-        self.price_cache= self.db["price_cache"]
+        self.price_cache = self.db["coinData"]
 
     async def get_price(self, ticker: str, exchange: str) -> str:
         doc = await self.price_cache.find_one({'exchange': exchange, 'ticker': ticker})
@@ -52,6 +52,9 @@ class DBClient:
         docs = await self.subscription_table.find({'ticker': ticker, 'exchange': exchange}).to_list(length=None)
         return docs
 
+    async def delete_subscription(self, subscription: dict) -> None:
+        await self.subscription_table.delete_one({'_id': subscription['_id']})
+
     async def update_subscription(self, subscription: dict) -> None:
         await self.subscription_table.update_one({'_id': subscription['_id']},
                                                  {'$set': subscription}, upsert=True)
@@ -59,3 +62,17 @@ class DBClient:
     async def get_coin_list(self) -> list:
         docs = await self.price_cache.find().to_list(length=None)
         return docs
+
+    async def add_symbol(self, symbol: str, exchange: str) -> None:
+        await self.price_cache.update_one({
+            '_id': f'{exchange}_{symbol}'},
+            {'$set': {
+                '_id': f'{exchange}_{symbol}',
+                'exchange': exchange,
+                'ticker': symbol,
+                'price': None,
+                'lastUpdated': None,
+                'enabled': False
+            }
+        },
+            upsert=True)

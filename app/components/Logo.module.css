@@ -1,0 +1,32 @@
+.Container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.LogoText {
+    font-size: var(--largestt-font-size);
+    font-weight: bold;
+    cursor: pointer;
+    display: block;
+    white-space: nowrap;
+    padding-left: 5px;
+}
+
+.LogoSmallText {
+    font-size: var(--smallest-font-size);
+    text-align: right;
+    padding: 0;
+    margin-top: -10px;
+}
+
+.LogoSmallText:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.LogoImg {
+    height: 25px;
+    width: auto;
+    cursor: pointer;
+}

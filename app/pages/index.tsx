@@ -1,13 +1,13 @@
 import type { NextPage } from 'next';
 import * as React from 'react';
 import { PageLayout } from '../components/PageLayout';
-import { PricingAlert } from '../components/PricingAlert';
+import { AlertForm } from '../components/AlertForm';
 
 const Index: NextPage = () => {
   return (
     <div>
       <PageLayout>
-        <PricingAlert />
+        <AlertForm />
       </PageLayout>
     </div>
   );

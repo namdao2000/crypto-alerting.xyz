@@ -2,6 +2,10 @@ import React from 'react';
 import { Form } from 'react-bootstrap';
 import { Controller } from 'react-hook-form';
 
+type Option = {
+  key: string;
+  value: any;
+};
 export const SelectInput: React.FC<any> = ({
   name,
   control,
@@ -11,7 +15,7 @@ export const SelectInput: React.FC<any> = ({
   name: string;
   control: any;
   label?: string;
-  options: string[];
+  options: Option[];
 }) => {
   return (
     <Form.Group>
@@ -27,8 +31,8 @@ export const SelectInput: React.FC<any> = ({
             ref={ref}
           >
             {options.map((option) => (
-              <option key={option} value={option}>
-                {option}
+              <option key={option.key} value={option.value}>
+                {option.key}
               </option>
             ))}
           </Form.Select>

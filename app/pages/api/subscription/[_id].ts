@@ -17,12 +17,14 @@ export default async function handle(
 
   switch (method) {
     case 'DELETE':
-      await SubscriptionsService.deleteSubscription(_id as string, email);
+      await SubscriptionsService.deleteSubscription(body);
       res.status(200).send('OK');
       break;
 
     case 'PATCH':
       const schema = Joi.object({
+        _id: Joi.string().required(),
+        __v: Joi.number(),
         alertType: Joi.string(),
         email: Joi.string(),
         phone: Joi.string(),
@@ -32,9 +34,11 @@ export default async function handle(
         alertFrequency: Joi.number(),
         disableAfterAlert: Joi.boolean(),
         enabled: Joi.boolean(),
+        notificationType: Joi.string(),
+        lastAlerted: Joi.date().allow(null),
       });
       await validate(schema, body, res);
-      await SubscriptionsService.updateSubscription(_id as string, email, body);
+      await SubscriptionsService.updateSubscription(body);
       res.status(200).send('OK');
       break;
   }

@@ -14,15 +14,9 @@
     width: var(--max-container-width);
 }
 
-.Logo {
-    font-size: var(--largestt-font-size);
-    font-weight: bold;
-    cursor: pointer;
-    color: var(--primary-foreground)
-}
-
 .Copyright {
     color: var(--primary-accents-5);
+    font-size: var(--smaller-font-size);
 }
 
 @media (max-width: 600px) {

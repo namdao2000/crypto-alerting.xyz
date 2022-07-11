@@ -12,9 +12,7 @@
     "vercel-build": "next build"
   },
   "dependencies": {
-    "@emotion/react": "^11.9.3",
-    "@emotion/styled": "^11.9.3",
-    "@mui/material": "^5.8.7",
+    "@geist-ui/core": "^2.3.8",
     "@next-auth/mongodb-adapter": "0.0.2-next.298",
     "bcryptjs": "^2.4.3",
     "bootstrap": "^5.1.3",
