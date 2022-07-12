@@ -217,6 +217,10 @@ class AlertThread(threading.Thread):
 
             if subscription['notificationType'] == "SMS":
                 alert_sent = self.sms_client.send_sms(subscription, price)
+                if not alert_sent:
+                    print("[ALERT_THREAD] SMS failed to send. ?? invalid number")
+                    await self.db_client.delete_subscription(subscription)
+
 
             if alert_sent:
                 if subscription['disableAfterAlert'] is True:
