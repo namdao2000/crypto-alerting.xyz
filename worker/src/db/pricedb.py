@@ -16,20 +16,22 @@ def create_price(ticker: str, exchange: str, price: str) -> dict:
 
 
 dotenv.load_dotenv()
-MONGO_URL = os.getenv('MONGO_URL')
-MONG_USER = os.getenv('MONGO_URL')
 
 
 class DBClient:
 
     def __init__(self, host: str = "mongo", test=False):
-        self.client = motor_asyncio.AsyncIOMotorClient(f'mongodb://{host}:27017/', username='admin',
-                                                       password='admin', authSource='admin')
-        # mongodb: // admin: admin @ localhost:27017 / admin
-        self.db = self.client["admin"]
+        dotenv.load_dotenv()
+        host = os.getenv('MONGODB_URI')
+        user = os.getenv('MONGO_INITDB_ROOT_USERNAME')
+        password = os.getenv('MONGO_INITDB_ROOT_PASSWORD')
+        db = os.getenv('MONGO_INITDB_DATABASE')
 
-        self.subscription_table = self.db["subscriptions"]
-        self.price_cache = self.db["coinData"]
+        self.client = motor_asyncio.AsyncIOMotorClient(host, username=user, password=password)
+
+        self.db = self.client[db]
+        self.subscription_table = self.client["subscriptions"]
+        self.price_cache = self.client["coinData"]
 
     async def get_price(self, ticker: str, exchange: str):
         doc = await self.price_cache.find_one({'exchange': exchange, 'ticker': ticker})
@@ -84,5 +86,3 @@ class DBClient:
                 'enabled': enable
             }
             })
-
-
