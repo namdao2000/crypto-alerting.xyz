@@ -27,7 +27,10 @@ const dbConnect = async () => {
   if (!cached.promise) {
     const opts = {
       bufferCommands: false,
-    }
+      user: process.env.MONGO_INITDB_USER,
+      pass: process.env.MONGO_INITDB_ROOT_PASSWORD,
+      dbName: process.env.MONGO_INITDB_DATABASE,
+    };
 
     cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
       return mongoose
