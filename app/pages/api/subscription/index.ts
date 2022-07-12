@@ -36,6 +36,7 @@ export default async function handle(
         alertFrequency: Joi.number().required(),
         disableAfterAlert: Joi.boolean(),
         notificationType: Joi.string().required(),
+        lastAlerted: Joi.date().allow(null),
       });
 
       await validate(schema, body, res);
@@ -53,6 +54,14 @@ export default async function handle(
       if (!coin) {
         res.status(400).json('Coin not found on FTX');
         return;
+      }
+
+      console.log(coin.enabled);
+
+      if (!coin.enabled) {
+        console.log(coin._id);
+        console.log('Coin is disabled on FTX');
+        await CoinDataService.enableCoin(coin._id);
       }
 
       await SubscriptionsService.createSubscription({

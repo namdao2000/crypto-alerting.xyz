@@ -33,6 +33,7 @@ class EmailClient:
 
             mail = self.build_dynamic_email(subscription, price)
             response = self._client.send(mail)
+            print(response)
 
             if response.status_code == 202:
                 print(f"[ALERT_THREAD] Email sent to: {subscription['email']}")

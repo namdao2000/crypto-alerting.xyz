@@ -1,8 +1,8 @@
 FROM python:3.7
 
-WORKDIR /app/worker
+WORKDIR /app/
 
-COPY requirements.txt /app/worker
+COPY requirements.txt /app/
 
 RUN pip3 install -r requirements.txt
 

@@ -28,29 +28,29 @@ class DBClient:
         # mongodb: // admin: admin @ localhost:27017 / admin
         self.db = self.client["admin"]
 
-        # # if dev env, drop collection
-        # if os.getenv('ENV') == 'dev':
-        if not test:
-            self.db["subscriptions"].drop()
-            self.db["coinData"].drop()
-
         self.subscription_table = self.db["subscriptions"]
         self.price_cache = self.db["coinData"]
 
-    async def get_price(self, ticker: str, exchange: str) -> str:
+    async def get_price(self, ticker: str, exchange: str):
         doc = await self.price_cache.find_one({'exchange': exchange, 'ticker': ticker})
         if doc is None:
             return None
         return doc['price']
 
-    async def update_price(self, ticker: str, exchange: str, price: str) -> None:
-        doc = create_price(ticker, exchange, price)
-        await self.price_cache.update_one({'exchange': exchange, 'ticker': f'{ticker}'},
-                                          {'$set': doc}, upsert=True)
+    async def update_price(self, id: str, price: float) -> None:
+        await self.price_cache.update_one({'_id': id},
+                                          {'$set': {"price": price,
+                                                    "lastUpdated": datetime.datetime.now().isoformat()}})
 
-    async def get_subscriptions(self, ticker: str, exchange: str) -> list:
-        docs = await self.subscription_table.find({'ticker': ticker, 'exchange': exchange}).to_list(length=None)
+    async def get_subscriptions(self, _id: str) -> list:
+        exchange, ticker = [x.strip() for x in _id.split('_')]
+        docs = await self.subscription_table.find({'exchange': exchange, 'ticker': ticker}).to_list(length=None)
         return docs
+
+    async def get_all_subscriptions(self) -> list:
+        docs = await self.subscription_table.find().to_list(length=None)
+        return docs
+
 
     async def delete_subscription(self, subscription: dict) -> None:
         await self.subscription_table.delete_one({'_id': subscription['_id']})
@@ -59,11 +59,11 @@ class DBClient:
         await self.subscription_table.update_one({'_id': subscription['_id']},
                                                  {'$set': subscription}, upsert=True)
 
-    async def get_coin_list(self) -> list:
-        docs = await self.price_cache.find().to_list(length=None)
+    async def get_coin_list(self, **kwargs) -> list:
+        docs = await self.price_cache.find(kwargs).to_list(length=None)
         return docs
 
-    async def add_symbol(self, symbol: str, exchange: str) -> None:
+    async def add_coin(self, exchange: str, symbol: str) -> None:
         await self.price_cache.update_one({
             '_id': f'{exchange}_{symbol}'},
             {'$set': {
@@ -74,5 +74,15 @@ class DBClient:
                 'lastUpdated': None,
                 'enabled': False
             }
-        },
+            },
             upsert=True)
+
+    async def toggle_coin(self, _id: str, enable: bool) -> None:
+        await self.price_cache.update_one({
+            '_id': _id},
+            {'$set': {
+                'enabled': enable
+            }
+            })
+
+

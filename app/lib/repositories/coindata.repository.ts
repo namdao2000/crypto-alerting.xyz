@@ -19,6 +19,9 @@ const CoinDataSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    enabled: {
+      type: Boolean,
+    },
   },
   { collection: 'coinData' }
 );

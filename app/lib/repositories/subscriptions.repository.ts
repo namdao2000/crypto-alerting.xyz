@@ -35,6 +35,7 @@ const SubscriptionsSchema = new mongoose.Schema({
   },
   lastAlerted: {
     type: Date,
+    default: null,
   },
   ipAddress: {
     type: String, // Prevent people from creating too many subscriptions. Will implement later.
