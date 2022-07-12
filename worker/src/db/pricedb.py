@@ -27,7 +27,7 @@ class DBClient:
         password = os.getenv('MONGO_INITDB_ROOT_PASSWORD')
         db = os.getenv('MONGO_INITDB_DATABASE')
 
-        self.client = motor_asyncio.AsyncIOMotorClient(host, username=user, password=password)
+        self.client = motor_asyncio.AsyncIOMotorClient(host, username=user, password=password, authSource='admin)
 
         self.db = self.client[db]
         self.subscription_table = self.db["subscriptions"]
