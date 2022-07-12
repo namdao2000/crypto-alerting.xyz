@@ -30,8 +30,8 @@ class DBClient:
         self.client = motor_asyncio.AsyncIOMotorClient(host, username=user, password=password)
 
         self.db = self.client[db]
-        self.subscription_table = self.client["subscriptions"]
-        self.price_cache = self.client["coinData"]
+        self.subscription_table = self.db["subscriptions"]
+        self.price_cache = self.db["coinData"]
 
     async def get_price(self, ticker: str, exchange: str):
         doc = await self.price_cache.find_one({'exchange': exchange, 'ticker': ticker})
