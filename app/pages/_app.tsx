@@ -4,8 +4,13 @@ import Head from 'next/head';
 import { SessionProvider } from 'next-auth/react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { CssBaseline, GeistProvider } from '@geist-ui/core';
+import { usePostHog } from 'next-use-posthog';
 
 function MyApp({ Component, pageProps }: AppProps) {
+  usePostHog('phc_6OdVkZmfdrezipJVP02tKehEiM5zVef3dvNmmzr5CMZ', {
+    api_host: 'https://app.posthog.com',
+  });
+
   return (
     <SessionProvider session={pageProps.session}>
       <GeistProvider>

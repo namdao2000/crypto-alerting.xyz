@@ -18,6 +18,7 @@
     text-align: right;
     padding: 0;
     margin-top: -10px;
+    color: var(--primary-foreground)
 }
 
 .LogoSmallText:hover {
@@ -29,4 +30,9 @@
     height: 25px;
     width: auto;
     cursor: pointer;
+}
+
+/*Remove link decoration*/
+.LinkText {
+    text-decoration: none;
 }

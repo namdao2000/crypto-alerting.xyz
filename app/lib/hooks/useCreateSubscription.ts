@@ -19,6 +19,7 @@ export const useCreateSubscription = ({
 }): HookReturn => {
   const [loading, setLoading] = useState(false);
 
+  console.log('wtf', `${server}/api/subscription1`);
   const createSubscription = async (data: Subscription) => {
     setLoading(true);
     const response = await fetch(`${server}/api/subscription`, {

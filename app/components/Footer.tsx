@@ -8,9 +8,13 @@ const Footer: React.FC = () => {
     <div className={styles.Container}>
       <div className={styles.FooterBar}>
         <Logo />
-        <div className={styles.Copyright}>
-          © {new Date().getFullYear()} MIT License <GitHub size={16} />
-        </div>
+        <a
+          href="https://github.com/namdao2000/crypto-alerting.xyz"
+          className={styles.Copyright}
+        >
+          © {new Date().getFullYear()} MIT License{' '}
+          <GitHub style={{ marginLeft: '5px' }} size={16} />
+        </a>
       </div>
     </div>
   );

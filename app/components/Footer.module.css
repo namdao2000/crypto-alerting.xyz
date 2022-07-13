@@ -17,11 +17,14 @@
 .Copyright {
     color: var(--primary-accents-5);
     font-size: var(--smaller-font-size);
+    display: flex;
+    align-items: center;
 }
 
 @media (max-width: 600px) {
     .FooterBar {
         flex-direction: column;
+        min-height: 80px;
     }
 
     .Container {

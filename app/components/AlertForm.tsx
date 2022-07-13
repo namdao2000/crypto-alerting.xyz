@@ -171,7 +171,7 @@ export const AlertForm: React.FC<any> = () => {
                           control={control}
                           rules={{ required: 'required' }}
                           errorMessage={errors.price?.message}
-                          placeholder="0"
+                          placeholder="$0"
                         />
                       </div>
                     )}
