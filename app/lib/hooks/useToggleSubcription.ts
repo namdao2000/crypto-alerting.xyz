@@ -1,4 +1,3 @@
-import { server } from '../utils/utils';
 import { Subscription } from '../services/subscriptions.service';
 import { useState } from 'react';
 
@@ -17,7 +16,8 @@ export const useToggleSubscription = (): HookReturn => {
       'enabled': data['enabled'],
       '_id': data['_id'],
     }
-    const response = await fetch(`${server}/api/subscription/_id`, {
+    const url = window.location.origin;
+    const response = await fetch(`${url}/api/subscription/_id`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
