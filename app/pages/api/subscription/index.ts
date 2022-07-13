@@ -46,13 +46,13 @@ export default async function handle(
         body.exchange
       );
 
-      if (body.alertType === 'LISTING' && coin.price) {
-        res.status(400).json('Coin is already listed');
+      if (!coin && body.alertType !== 'LISTING') {
+        res.status(400).json('Coin not found on FTX');
         return;
       }
 
-      if (!coin) {
-        res.status(400).json('Coin not found on FTX');
+      if (body.alertType === 'LISTING' && coin) {
+        res.status(400).json('Coin is already listed');
         return;
       }
 
