@@ -13,6 +13,7 @@ export const useToggleSubscription = (): HookReturn => {
   const toggleSubscription = async (data: Subscription) => {
     setLoading(true);
     data['enabled'] = !data['enabled'];
+    console.log(data);
     const response = await fetch(`${server}/api/subscription/_id`, {
       method: 'PATCH',
       headers: {

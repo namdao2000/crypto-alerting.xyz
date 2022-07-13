@@ -56,14 +56,6 @@ export default async function handle(
         return;
       }
 
-      console.log(coin.enabled);
-
-      if (!coin.enabled) {
-        console.log(coin._id);
-        console.log('Coin is disabled on FTX');
-        await CoinDataService.enableCoin(coin._id);
-      }
-
       await SubscriptionsService.createSubscription({
         ...body,
         email,
