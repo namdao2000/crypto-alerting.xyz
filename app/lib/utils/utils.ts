@@ -1,4 +1,4 @@
-export const server = process.env._SERVER || 'http://localhost:3000';
+export const server = "https://cryptoalerts.coinbooks.xyz";
 
 
 
