@@ -18,7 +18,7 @@ export const useToggleSubscription = (): HookReturn => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify({ ...data, ipAddress: undefined }),
     });
     if (!response.ok) {
       throw new Error(response.statusText);
