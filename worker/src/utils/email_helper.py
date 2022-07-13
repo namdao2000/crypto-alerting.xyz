@@ -12,18 +12,21 @@ class EmailClient:
 
         sendgrid_api_key = os.getenv('SENDGRID_API_KEY')
         from_email = os.getenv('FROM_EMAIL')
-        template_id = os.getenv('SENDGRID_TEMPLATE_ID')
+        listing_template_id = os.getenv('LISTING_ALERT_SENDGRID_TEMPLATE_ID')
+        price_template_id = os.getenv('PRICE_ALERT_SENDGRID_TEMPLATE_ID')
+
 
         if sendgrid_api_key is None:
             raise Exception("Sendgrid API key is not set")
         if from_email is None:
             raise Exception("From email is not set")
-        if template_id is None:
-            raise Exception("Template ID is not set")
+        if price_template_id is None or price_template_id is None:
+            raise Exception("Email Template ID is not set")
 
         self._client = SendGridAPIClient(sendgrid_api_key)
         self._from_email = from_email
-        self._template_id = template_id
+        self.listing_alert_template_id = listing_template_id
+        self.price_alert_template_id = price_template_id
 
     def send_email(self, subscription: dict, price: float):
         """
@@ -54,14 +57,16 @@ class EmailClient:
         mail = None
 
         if subscription['alertType'] == "LISTING":
-            subject = f"{subscription['ticker']} listed on {subscription['exchange']}"
-            body = f"{subscription['ticker']} has been listed on {subscription['exchange']} at {price}"
             mail = Mail(
                 from_email=self._from_email,
                 to_emails=subscription['email'],
-                subject=subject,
-                html_content=body
             )
+            mail.dynamic_template_data = {
+                'ticker': subscription['ticker'],
+                'exchange': subscription['exchange'],
+            }
+            mail.template_id = self.listing_alert_template_id
+
         else:
             mail = Mail(
                 from_email=self._from_email,
@@ -71,8 +76,9 @@ class EmailClient:
                 'alertType': subscription['alertType'],
                 'ticker': subscription['ticker'],
                 'price': subscription['threshold'],
+                'currentPrice': price
             }
-            mail.template_id = self._template_id
+            mail.template_id = self.price_alert_template_id
 
         return mail
 
