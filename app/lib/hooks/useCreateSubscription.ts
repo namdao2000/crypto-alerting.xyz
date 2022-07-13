@@ -1,5 +1,5 @@
 import { Subscription } from '../services/subscriptions.service';
-import { server } from '../utils/utils';
+// import { server } from '../utils/utils';
 import { useState } from 'react';
 
 type HookReturn = {
@@ -18,10 +18,10 @@ export const useCreateSubscription = ({
   onFailure: (error?: any) => void;
 }): HookReturn => {
   const [loading, setLoading] = useState(false);
-
   const createSubscription = async (data: Subscription) => {
     setLoading(true);
-    const response = await fetch(`${server}/api/subscription`, {
+    const url = window.location.origin;
+    const response = await fetch(`${url}/api/subscription`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
