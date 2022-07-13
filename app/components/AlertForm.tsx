@@ -166,7 +166,7 @@ export const AlertForm: React.FC<any> = () => {
                     {watchedAlertType !== 'LISTING' && (
                       <div className="pb-3" style={{ width: '100%' }}>
                         <TextInput
-                          label="Price"
+                          label="Price [USD]"
                           name="price"
                           control={control}
                           rules={{ required: 'required' }}
