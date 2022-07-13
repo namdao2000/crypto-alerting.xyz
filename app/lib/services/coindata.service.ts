@@ -17,12 +17,4 @@ export const CoinDataService = {
     return CoinData.findOne({ _id: `${exchange}_${ticker}` });
   },
 
-  async enableCoin(id: string): Promise<void> {
-    await dbConnect();
-    await CoinData.updateOne(
-      { _id: id },
-      { $set: { enabled: true } },
-      { upsert: true }
-    );
-  },
 };

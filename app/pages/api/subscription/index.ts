@@ -46,22 +46,14 @@ export default async function handle(
         body.exchange
       );
 
-      if (body.alertType === 'LISTING' && coin.price) {
-        res.status(400).json('Coin is already listed');
-        return;
-      }
-
-      if (!coin) {
+      if (!coin && body.alertType !== 'LISTING') {
         res.status(400).json('Coin not found on FTX');
         return;
       }
 
-      console.log(coin.enabled);
-
-      if (!coin.enabled) {
-        console.log(coin._id);
-        console.log('Coin is disabled on FTX');
-        await CoinDataService.enableCoin(coin._id);
+      if (body.alertType === 'LISTING' && coin) {
+        res.status(400).json('Coin is already listed');
+        return;
       }
 
       await SubscriptionsService.createSubscription({
