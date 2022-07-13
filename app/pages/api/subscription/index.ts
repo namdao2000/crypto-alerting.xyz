@@ -17,7 +17,7 @@ export default async function handle(
         email
       );
 
-      if (numSubscriptions >= 10) {
+      if (numSubscriptions >= 15) {
         res
           .status(400)
           .json('You have reached the maximum number of subscriptions');
