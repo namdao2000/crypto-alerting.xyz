@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import styles from './AlertsComponent.module.css';
-import { Grid, Loading, Table, Toggle } from '@geist-ui/core';
+import { Grid, Loading, Progress, Table, Toggle } from '@geist-ui/core';
 import { Trash2 } from 'react-feather';
 import { useToggleSubscription } from '../lib/hooks/useToggleSubcription';
 
@@ -56,9 +56,23 @@ export const AlertsComponent: React.FC<any> = ({
       <Grid.Container className={styles.OuterCard} gap={2}>
         <Grid xs={24}>
           <div>
-            <div className={styles.Title}>Your Alerts.</div>
+            <div className={styles.Title}>Your Alerts</div>
           </div>
         </Grid>
+        {alerts && !!alerts.length && (
+          <Grid xs={24}>
+            <Grid.Container gap={2}>
+              <Grid xs={24}>
+                <div className={styles.TitleSubtext}>
+                  You have used {alerts.length} out of 15 free alerts.
+                </div>
+              </Grid>
+              <Grid xs={24}>
+                <Progress value={(alerts.length / 15) * 100} />
+              </Grid>
+            </Grid.Container>
+          </Grid>
+        )}
         <Grid xs={24}>
           {loading ? (
             <Loading />
