@@ -73,7 +73,7 @@ def handle_alert_task(subscription: dict, price: str):
     if subscription['enabled'] is False:
         return
     # Check if last alerted has been sent in the last 5 minutes
-    if not is_stale(subscription['lastAlerted'], timedelta(minutes=subscription['alertFrequency'])):
+    if not is_stale(subscription['lastAlerted'], timedelta(hours=subscription['alertFrequency'])):
         return
 
 
