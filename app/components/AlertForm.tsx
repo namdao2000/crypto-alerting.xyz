@@ -9,6 +9,7 @@ import { SelectInput } from './SelectInput';
 import { useSession } from 'next-auth/react';
 import { useCreateSubscription } from '../lib/hooks/useCreateSubscription';
 import { Button, Grid } from '@geist-ui/core';
+import Async, { useAsync } from 'react-select/async';
 
 export const AlertForm: React.FC<any> = () => {
   const { data: session } = useSession();
@@ -66,7 +67,7 @@ export const AlertForm: React.FC<any> = () => {
       disableAfterAlert: !data.keepAlertAfterTrigger,
       alertFrequency: data.alertFrequency,
       notificationType: data.notificationType,
-      phone: data.phone || undefined,
+      phone: data.phone?.trim() || undefined,
     });
     reset({
       coin: '',
@@ -79,6 +80,25 @@ export const AlertForm: React.FC<any> = () => {
       exchange: data.exchange,
     });
   });
+
+  const url = window.location.origin;
+
+  const load_options = (inputValue) => {
+    const get_data = {
+      ticker: inputValue,
+      exchange: "FTX"
+    }
+    const url = window.location.origin;
+    const options = fetch(`${url}/api/tickers/`, {
+      method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(get_data),
+    });
+    console.log(options);
+    return
+  }
 
   return (
     <div className={styles.Container}>
