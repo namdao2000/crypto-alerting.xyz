@@ -8,3 +8,17 @@
 .ErrorSelect {
     border-color: var(--error-color) !important;
 }
+
+.OptionBox {
+    display: flex;
+    justify-content: space-between;
+}
+.Value {
+    font-size: 1.25em;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.OptionPrice {
+
+}

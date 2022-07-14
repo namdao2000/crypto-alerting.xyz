@@ -34,6 +34,15 @@ export const CoinInput: React.FC<any> = ({
     return d;
   }, 200);
 
+  const formatOptionLabel = ({ ticker, price }) => {
+    return (
+      <div className={styles.OptionBox}>
+        <div>{ticker}</div>
+        <div>${price}</div>
+      </div>
+    );
+  };
+
   return (
     <Form.Group>
       <Form.Label>{label}</Form.Label>
@@ -48,8 +57,9 @@ export const CoinInput: React.FC<any> = ({
             getOptionLabel={(e) => e.ticker}
             getOptionValue={(e) => e.ticker}
             loadOptions={debouncedLoadOptions}
-            onChange={onChange}
             value={value}
+            formatOptionLabel={formatOptionLabel}
+            onChange={onChange}
           />
         )}
       />
