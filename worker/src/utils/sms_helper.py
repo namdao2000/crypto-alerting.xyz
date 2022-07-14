@@ -44,7 +44,7 @@ class SMSClient:
         body = None
         # create listing twilio message kwargs
         if subscription['alertType'] == "LISTING":
-            body = f"{subscription['ticker']} has been listed on {subscription['exchange']} at {price}"
+            body = f"{subscription['ticker']} has been listed on {subscription['exchange']} at ${price}"
 
         if subscription['alertType'] == "ABOVE":
             body = f"{subscription['ticker']} is above {subscription['threshold']} at &{price}"
