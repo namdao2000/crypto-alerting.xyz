@@ -63,7 +63,7 @@ export const AlertsComponent: React.FC<any> = ({
           <Grid xs={24}>
             <Grid.Container gap={2}>
               <Grid xs={24}>
-                <div className={styles.TitleSubtext}>
+                <div className={styles.AlertsSubtext}>
                   You have used {alerts.length} out of 15 free alerts.
                 </div>
               </Grid>
