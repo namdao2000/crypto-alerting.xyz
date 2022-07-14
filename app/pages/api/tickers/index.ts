@@ -6,9 +6,9 @@ export default async function handle(
   res: NextApiResponse
 ) {
   const {
-    body,
+    body: {ticker, exchange},
     method,
-    query: { ticker, exchange },
+    query,
   } = req;
 
   switch (method) {
