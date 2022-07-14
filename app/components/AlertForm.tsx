@@ -47,7 +47,7 @@ export const AlertForm: React.FC<any> = () => {
       alertType: 'ABOVE',
       notificationType: 'EMAIL',
       keepAlertAfterTrigger: false,
-      alertFrequency: 5,
+      alertFrequency: 6,
       phone: '',
       exchange: 'FTX',
     },
@@ -74,7 +74,7 @@ export const AlertForm: React.FC<any> = () => {
       alertType: data.alertType,
       notificationType: data.notificationType,
       keepAlertAfterTrigger: data.keepAlertAfterTrigger,
-      alertFrequency: 5,
+      alertFrequency: 6,
       phone: '',
       exchange: data.exchange,
     });
@@ -225,15 +225,10 @@ export const AlertForm: React.FC<any> = () => {
                       control={control}
                       label="Frequency"
                       options={[
-                        { key: '5 minutes', value: 5 },
-                        { key: '10 minutes', value: 10 },
-                        { key: '15 minutes', value: 15 },
-                        { key: '30 minutes', value: 30 },
-                        { key: '1 hour', value: 60 },
-                        { key: '2 hours', value: 120 },
-                        { key: '4 hours', value: 240 },
-                        { key: '12 hours', value: 720 },
-                        { key: '1 day', value: 1440 },
+                        { key: '6 hours', value: 6 },
+                        { key: '12 hours', value: 12 },
+                        { key: '1 day', value: 24 },
+                        { key: '1 week', value: 168 },
                       ]}
                     />
                   </div>

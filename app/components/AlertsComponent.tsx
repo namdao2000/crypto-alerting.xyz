@@ -27,7 +27,7 @@ export const AlertsComponent: React.FC<any> = ({
           ...alert,
           threshold: alert.threshold ? `$${alert.threshold}` : 'N/A',
           alertFrequency: alert.alertFrequency
-            ? `${alert.alertFrequency} minutes`
+            ? `${alert.alertFrequency} hours`
             : 'N/A',
           enabled: (
             <Toggle
