@@ -12,7 +12,7 @@
     border-radius: 10px;
 }
 
-.FormCard {
+.AlertsTable {
     padding: 20px;
     background-color: var(--primary-background);
     border-radius: 10px !important;
@@ -37,4 +37,22 @@
 
 .TrashButton:hover {
     color: var(--primary-foreground);
+}
+
+.AlertsTableMobile {
+    padding: 20px;
+    background-color: var(--primary-background);
+    border-radius: 10px !important;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+    font-size: var(--smaller-font-size);
+    display: none;
+}
+
+@media (max-width: 600px) {
+    .AlertsTable {
+        display: none;
+    }
+    .AlertsTableMobile {
+        display: block !important;
+    }
 }
