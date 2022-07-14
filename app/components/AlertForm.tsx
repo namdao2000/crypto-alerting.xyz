@@ -9,7 +9,6 @@ import { SelectInput } from './SelectInput';
 import { useSession } from 'next-auth/react';
 import { useCreateSubscription } from '../lib/hooks/useCreateSubscription';
 import { Button, Grid } from '@geist-ui/core';
-import Async, { useAsync } from 'react-select/async';
 
 export const AlertForm: React.FC<any> = () => {
   const { data: session } = useSession();
