@@ -47,10 +47,10 @@ class SMSClient:
             body = f"{subscription['ticker']} has been listed on {subscription['exchange']} at {price}"
 
         if subscription['alertType'] == "ABOVE":
-            body = f"{subscription['ticker']} is above {subscription['threshold']} at {price}"
+            body = f"{subscription['ticker']} is above {subscription['threshold']} at &{price}"
 
         if subscription['alertType'] == "BELOW":
-            body = f"{subscription['ticker']} is below {subscription['threshold']} at {price}"
+            body = f"{subscription['ticker']} is below {subscription['threshold']} at &{price}"
 
         text = {
             "messaging_service_sid": self._messaging_service_sid,
