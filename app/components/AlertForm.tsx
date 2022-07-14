@@ -5,6 +5,7 @@ import { Bell } from 'react-feather';
 import { useForm, Controller } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import { TextInput } from './TextInput';
+import { CoinInput } from './CoinInput';
 import { SelectInput } from './SelectInput';
 import { useSession } from 'next-auth/react';
 import { useCreateSubscription } from '../lib/hooks/useCreateSubscription';
@@ -80,7 +81,6 @@ export const AlertForm: React.FC<any> = () => {
     });
   });
 
-
   return (
     <div className={styles.Container}>
       <Grid.Container gap={2} className={styles.OuterCard}>
@@ -139,12 +139,11 @@ export const AlertForm: React.FC<any> = () => {
                   </div>
                 )}
                 <div className="pb-3">
-                  <TextInput
+                  <CoinInput
                     label="Coin"
                     name="coin"
                     control={control}
                     rules={{ required: 'required' }}
-                    errorMessage={errors.coin?.message}
                     placeholder="i.e BTC"
                   />
                 </div>

@@ -17,4 +17,10 @@ export const CoinDataService = {
     return CoinData.findOne({ _id: `${exchange}_${ticker}` });
   },
 
+  async getCoins(ticker: string, exchange: string): Promise<CoinData[]> {
+    await dbConnect();
+    const regex = new RegExp('^' + ticker, 'i');
+    return CoinData.find({exchange, ticker:regex}  );
+  }
+
 };

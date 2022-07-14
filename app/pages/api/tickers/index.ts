@@ -6,14 +6,14 @@ export default async function handle(
   res: NextApiResponse
 ) {
   const {
-    body: {ticker, exchange},
+    body,
     method,
-    query,
+    query: {ticker, exchange},
   } = req;
 
   switch (method) {
     case 'GET':
-      const data = await CoinDataService.getCoinData(
+      const data = await CoinDataService.getCoins(
         ticker as string,
         exchange as string
       );
@@ -21,7 +21,7 @@ export default async function handle(
         res.status(404).json({ message: 'Not found' });
         return;
       } else {
-        res.status(200).json('ok');
+        res.status(200).json(data);
       }
       return data;
   }

@@ -11,25 +11,25 @@ dummy_data = [
         "exchange": "FTX",
         "ticker": "BTC",
         "price": "0.0",
-        "lastUpdated": (datetime.now() - timedelta(days=10)).isoformat()
+        "lastUpdated": (datetime.now() - timedelta(days=10)).isoat()
     },
     {
         "exchange": "BINANCE",
         "ticker": "BTC",
         "price": "0.0",
-        "lastUpdated": (datetime.now() - timedelta(days=10)).isoformat()
+        "lastUpdated": (datetime.now() - timedelta(days=10)).isoat()
     },
     {
         "exchange": "OKX",
         "ticker": "BTC",
         "price": "0.0",
-        "lastUpdated": (datetime.now() - timedelta(days=10)).isoformat()
+        "lastUpdated": (datetime.now() - timedelta(days=10)).isoat()
     },
     {
         "exchange": "FTX",
         "ticker": "ETH",
         "price": "0.0",
-        "lastUpdated": (datetime.now() - timedelta(days=10)).isoformat()
+        "lastUpdated": (datetime.now() - timedelta(days=10)).isoat()
     }
 ]
 

@@ -3,6 +3,8 @@ import { SubscriptionsService } from '../../../lib/services/subscriptions.servic
 import Joi from 'joi';
 import { validate } from '../../../lib/utils/validate';
 import { getUserEmail } from '../../../lib/utils/get-user-email';
+import { CoinInput } from '../../../components/CoinInput';
+import React from 'react';
 
 export default async function handle(
   req: NextApiRequest,
@@ -20,7 +22,6 @@ export default async function handle(
       await SubscriptionsService.deleteSubscription(body);
       res.status(200).send('OK');
       break;
-
     case 'PATCH':
       const schema = Joi.object({
         _id: Joi.string().required(),
