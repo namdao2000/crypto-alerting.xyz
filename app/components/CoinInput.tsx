@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Form } from 'react-bootstrap';
 import { Controller } from 'react-hook-form';
 import AsyncSelect from 'react-select/async';
@@ -38,7 +38,7 @@ export const CoinInput: React.FC<any> = ({
     return (
       <div className={styles.OptionBox}>
         <div>{ticker}</div>
-        <div>${price}</div>
+        {!!price && <div>${price}</div>}
       </div>
     );
   };
@@ -52,6 +52,7 @@ export const CoinInput: React.FC<any> = ({
         rules={rules}
         render={({ field: { onChange, value, ref } }) => (
           <AsyncSelect
+            isClearable={true}
             placeholder={placeholder}
             ref={ref}
             getOptionLabel={(e) => e.ticker}

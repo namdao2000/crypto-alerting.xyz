@@ -169,7 +169,7 @@ export const AlertForm: React.FC<any> = () => {
                         },
                       },
                     }}
-                    placeholder="i.e BTC"
+                    placeholder="ETH"
                     errorMessage={errors.coin?.message}
                   />
                 </div>

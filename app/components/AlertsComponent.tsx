@@ -79,21 +79,46 @@ export const AlertsComponent: React.FC<any> = ({
           ) : (
             <>
               {alerts && alerts.length ? (
-                <Table data={formattedPriceAlerts} className={styles.FormCard}>
-                  <Table.Column prop="ticker" label="coin" />
-                  <Table.Column prop="alertType" label="when" />
-                  <Table.Column prop="threshold" label="price" />
-                  <Table.Column prop="notificationType" label="notify via" />
-                  <Table.Column prop="alertFrequency" label="frequency" />
-                  <Table.Column prop="enabled" label="status" />
-                  <Table.Column prop="remove" label="remove" />
-                </Table>
+                <>
+                  <Table
+                    data={formattedPriceAlerts}
+                    className={styles.AlertsTable}
+                  >
+                    <Table.Column prop="ticker" label="coin" />
+                    <Table.Column prop="alertType" label="when" />
+                    <Table.Column prop="threshold" label="price" />
+                    <Table.Column prop="notificationType" label="notify via" />
+                    <Table.Column prop="alertFrequency" label="frequency" />
+                    <Table.Column prop="enabled" label="status" />
+                    <Table.Column prop="remove" label="remove" />
+                  </Table>
+                </>
               ) : (
                 <div className={styles.TitleSubtext}>
                   You have no alerts. Let&apos;s create one!
                 </div>
               )}
             </>
+          )}
+        </Grid>
+
+        {/*Mobile view*/}
+        <Grid xs={24}>
+          {alerts && alerts.length ? (
+            <Table
+              data={formattedPriceAlerts}
+              className={styles.AlertsTableMobile}
+            >
+              <Table.Column prop="ticker" label="coin" width={100} />
+              <Table.Column prop="alertType" label="when" />
+              <Table.Column prop="threshold" label="price" />
+              <Table.Column prop="enabled" label="status" />
+              <Table.Column prop="remove" label="remove" />
+            </Table>
+          ) : (
+            <div className={styles.TitleSubtext}>
+              You have no alerts. Let&apos;s create one!
+            </div>
           )}
         </Grid>
       </Grid.Container>
