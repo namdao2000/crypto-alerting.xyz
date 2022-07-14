@@ -11,6 +11,7 @@ import { useSession } from 'next-auth/react';
 import { useCreateSubscription } from '../lib/hooks/useCreateSubscription';
 import { Button, Grid } from '@geist-ui/core';
 import { parsePhoneNumber } from 'awesome-phonenumber';
+import { CoinData } from '../lib/services/coindata.service';
 
 export const AlertForm: React.FC<any> = () => {
   const { data: session } = useSession();
@@ -36,7 +37,7 @@ export const AlertForm: React.FC<any> = () => {
     notificationType: string;
     alertType: string;
     price: string;
-    coin: string;
+    coin: CoinData;
     keepAlertAfterTrigger: boolean;
     alertFrequency: number;
     email: string;
@@ -44,7 +45,7 @@ export const AlertForm: React.FC<any> = () => {
     exchange: string;
   }>({
     defaultValues: {
-      coin: '',
+      coin: { ticker: undefined },
       price: '',
       alertType: 'ABOVE',
       notificationType: 'EMAIL',
@@ -61,7 +62,7 @@ export const AlertForm: React.FC<any> = () => {
 
   const onSubmit = handleSubmit(async (data) => {
     await createSubscription({
-      ticker: data.coin,
+      ticker: data.coin.ticker,
       threshold: parseInt(data.price) || undefined,
       alertType: data.alertType,
       exchange: data.exchange,
@@ -71,7 +72,7 @@ export const AlertForm: React.FC<any> = () => {
       phone: data.phone?.trim() || undefined,
     });
     reset({
-      coin: '',
+      coin: { ticker: undefined },
       price: '',
       alertType: data.alertType,
       notificationType: data.notificationType,
@@ -158,8 +159,18 @@ export const AlertForm: React.FC<any> = () => {
                     label="Coin"
                     name="coin"
                     control={control}
-                    rules={{ required: 'required' }}
+                    rules={{
+                      required: 'required',
+                      validate: {
+                        validateCoin: (value) => {
+                          if (!value.ticker) {
+                            return 'required';
+                          }
+                        },
+                      },
+                    }}
                     placeholder="i.e BTC"
+                    errorMessage={errors.coin?.message}
                   />
                 </div>
                 <Grid.Container gap={2}>

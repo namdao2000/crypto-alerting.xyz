@@ -1,0 +1,10 @@
+.ErrorMessage {
+    color: var(--error-color);
+    font-size: .875em;
+    margin-top: 4px;
+    padding: 0;
+}
+
+.ErrorSelect {
+    border-color: var(--error-color) !important;
+}
