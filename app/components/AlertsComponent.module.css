@@ -46,12 +46,18 @@
 }
 
 .AlertsTableMobile {
+    min-width: 310px;
     padding: 20px;
     background-color: var(--primary-background);
     border-radius: 10px !important;
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
     font-size: var(--smaller-font-size);
     display: none;
+}
+
+.AlertsSubtext {
+    font-size: var(--smaller-font-size);
+    margin-bottom: 10px;
 }
 
 @media (max-width: 600px) {
