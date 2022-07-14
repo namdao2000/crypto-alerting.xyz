@@ -40,6 +40,7 @@ class DBClient:
         return doc['price']
 
     async def update_price(self, id: str, price: float) -> None:
+
         await self.price_cache.update_one({'_id': id},
                                           {'$set': {"price": price,
                                                     "lastUpdated": datetime.datetime.now().isoformat()}})

@@ -1,7 +1,10 @@
 import asyncio
 import datetime
 import threading
+from queue import Empty
+
 import ccxt as ccxt
+import time
 from datetime import timedelta
 from utils import globals
 
@@ -56,7 +59,6 @@ class CCXTClient:
 
 
 def handle_alert_task(subscription: dict, price: str):
-
     if subscription['_id'] in globals.currently_updating_subscriptions:
         return
 
@@ -75,7 +77,6 @@ def handle_alert_task(subscription: dict, price: str):
     # Check if last alerted has been sent in the last 5 minutes
     if not is_stale(subscription['lastAlerted'], timedelta(hours=subscription['alertFrequency'])):
         return
-
 
     # If alert is of type listing and a price has been retrieved
     if subscription['alertType'] == "LISTING" and price is not None:
@@ -118,7 +119,6 @@ class Worker:
                     print(f"[WORKER] enabling coin: {coin['ticker']}")
                     await self.db.toggle_coin(coin['_id'], enable=True)
 
-
                 if coin['_id'] in globals.currently_updating_prices:
                     continue
 
@@ -138,6 +138,7 @@ class PriceThread(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self, daemon=True)
         self.db_client = None
+        self.coin_list = set()
         self.ccxt_client = None
 
     async def add_symbols_to_db(self):
@@ -153,12 +154,12 @@ class PriceThread(threading.Thread):
                     spot_coins = {coin['base'] for coin in markets if coin['spot']
                                   and coin['quoteId'].lower() in ['usd', 'usdt']}
                     _symbols = {x.upper() for x in spot_coins}
-                    symbols = {x for x in _symbols if 'HEDGE' not in x
-                               and 'BULL' not in x
-                               and 'BEAR' not in x
-                               and 'HALF' not in x}
+                    for symbol in _symbols:
+                        if 'HEDGE' not in symbol and 'MOVE' not in symbol and 'BULL' not in symbol \
+                                and 'BEAR' not in symbol and 'HALF' not in symbol:
+                            self.coin_list.add(symbol)
 
-                    for symbol in symbols:
+                    for symbol in self.coin_list:
                         if f"{exchange}_{symbol}" not in current_symbols:
                             tasks.append(self.db_client.add_coin(exchange, symbol))
 
@@ -167,8 +168,8 @@ class PriceThread(threading.Thread):
                     print(e)
                     await asyncio.sleep(1)
 
-            for symbol in symbols:
-                tasks.append(self.db_client.add_coin(symbol, exchange))
+            # for symbol in symbols:
+            #     tasks.append(self.db_client.add_coin(symbol, exchange))
 
             await asyncio.gather(*tasks)
 
@@ -178,12 +179,46 @@ class PriceThread(threading.Thread):
         asyncio.get_event_loop()
 
         await self.add_symbols_to_db()
+        await self.update_all_prices()
+        old_time = time.time()
+
+
         while True:
-            task = globals.update_price_queue.get()
+            # every 30 seconds, update the price of all coins
+            if time.time() - old_time > 30:
+                await self.update_all_prices()
+                old_time = time.time()
+
+            try:
+                task = globals.update_price_queue.get(timeout=31)
+            except Empty:
+                continue
             print(f"[COIN_THREAD] updating {task['ticker']}'s price on {task['exchange']}. {datetime.datetime.now()}")
             price = self.ccxt_client.get_price(task)  # get price from ccxt
             await self.db_client.update_price(task['_id'], price)
             globals.currently_updating_prices.remove(f'{task["_id"]}')
+
+    async def update_all_prices(self):
+        # TODO for all exchanges, since currently ABOVE and BELOW alerts are only supported with FTX this is ok
+        print("[COIN_THREAD] updating all prices..")
+        tasks = []
+        markets = self.ccxt_client.clients['FTX'].fetch_markets()
+        added = set()
+        prices = []
+
+        for coin in markets:
+            if coin['spot'] and coin['quoteId'].lower() in ['usd', 'usdt'] and coin['base'] not in added:
+                prices.append({"ticker": coin['base'].upper(), "price": coin["info"]["price"]})
+                added.add(coin['base'])
+
+        for coin in prices:
+            if 'HEDGE' not in coin['ticker'] and 'MOVE' not in coin['ticker'] and 'BULL' not in coin['ticker'] \
+                    and 'BEAR' not in coin['ticker'] and 'HALF' not in coin['ticker']:
+                tasks.append(self.db_client.update_price(f"FTX_{coin['ticker']}", float(coin['price'])))
+        await asyncio.gather(*tasks)
+        print("[COIN_THREAD] all prices updated.")
+
+
 
     def run(self):
         loop = asyncio.new_event_loop()
@@ -220,7 +255,6 @@ class AlertThread(threading.Thread):
                 if not alert_sent:
                     print("[ALERT_THREAD] SMS failed to send. ?? invalid number")
                     await self.db_client.delete_subscription(subscription)
-
 
             if alert_sent:
                 if subscription['disableAfterAlert'] is True:
