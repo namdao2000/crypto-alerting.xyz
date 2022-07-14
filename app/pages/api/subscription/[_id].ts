@@ -3,7 +3,6 @@ import { SubscriptionsService } from '../../../lib/services/subscriptions.servic
 import Joi from 'joi';
 import { validate } from '../../../lib/utils/validate';
 import { getUserEmail } from '../../../lib/utils/get-user-email';
-import { CoinInput } from '../../../components/CoinInput';
 import React from 'react';
 
 export default async function handle(
