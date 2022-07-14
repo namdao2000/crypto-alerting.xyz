@@ -80,24 +80,6 @@ export const AlertForm: React.FC<any> = () => {
     });
   });
 
-  const url = window.location.origin;
-
-  const load_options = (inputValue) => {
-    const get_data = {
-      ticker: inputValue,
-      exchange: "FTX"
-    }
-    const url = window.location.origin;
-    const options = fetch(`${url}/api/tickers/`, {
-      method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(get_data),
-    });
-    console.log(options);
-    return
-  }
 
   return (
     <div className={styles.Container}>
