@@ -9,6 +9,7 @@ import { SelectInput } from './SelectInput';
 import { useSession } from 'next-auth/react';
 import { useCreateSubscription } from '../lib/hooks/useCreateSubscription';
 import { Button, Grid } from '@geist-ui/core';
+import { parsePhoneNumber } from 'awesome-phonenumber';
 
 export const AlertForm: React.FC<any> = () => {
   const { data: session } = useSession();
@@ -132,8 +133,22 @@ export const AlertForm: React.FC<any> = () => {
                       label="Phone Number"
                       name="phone"
                       control={control}
-                      rules={{ required: 'required' }}
+                      rules={{
+                        required: 'required',
+                        validate: {
+                          validPhone: (value) => {
+                            const phone = parsePhoneNumber(value);
+                            if (!phone.canBeInternationallyDialled()) {
+                              return 'Please provide an international phone number';
+                            }
+                            if (!phone.isValid()) {
+                              return 'Please provide a valid number';
+                            }
+                          },
+                        },
+                      }}
                       placeholder="+61 999 999 999"
+                      errorMessage={errors.phone?.message}
                     />
                   </div>
                 )}
@@ -169,7 +184,16 @@ export const AlertForm: React.FC<any> = () => {
                           label="Price [USD]"
                           name="price"
                           control={control}
-                          rules={{ required: 'required' }}
+                          rules={{
+                            required: 'required',
+                            validate: {
+                              isPositive: (value) => {
+                                if (value < 0) {
+                                  return 'Price must be positive';
+                                }
+                              },
+                            },
+                          }}
                           errorMessage={errors.price?.message}
                           placeholder="$0"
                         />
