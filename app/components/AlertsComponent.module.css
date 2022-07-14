@@ -25,9 +25,15 @@
     font-size: 48px;
 }
 
-.Subtitle {
+.TitleSubtext {
     font-size: var(--smaller-font-size);
     margin-bottom: 10px;
+}
+
+.TitleSubtextMobile {
+    font-size: var(--smaller-font-size);
+    margin-bottom: 10px;
+    display: none;
 }
 
 .TrashButton {
@@ -54,5 +60,11 @@
     }
     .AlertsTableMobile {
         display: block !important;
+    }
+    .TitleSubtext {
+        display: none;
+    }
+    .TitleSubtextMobile {
+        display: block;
     }
 }
