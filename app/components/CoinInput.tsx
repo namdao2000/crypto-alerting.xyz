@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Form } from 'react-bootstrap';
 import { Controller } from 'react-hook-form';
 import AsyncSelect from 'react-select/async';
+import debounce from 'debounce-promise';
 
 export const CoinInput: React.FC<any> = ({
   name,
@@ -39,8 +40,21 @@ export const CoinInput: React.FC<any> = ({
         method: 'GET',
       }
     );
-    return await response.json().then((data) => data);
+    return response.json().then((data) => data);
   };
+
+  const debouncedLoadOptions = debounce(async (inputValue) => {
+    const url = window.location.origin;
+    const response = await fetch(
+      `${url}/api/tickers/?ticker=${inputValue}&exchange=FTX`,
+      {
+        method: 'GET',
+      }
+    );
+    const d = response.json().then((data) => data);
+    console.log(d);
+    return d;
+  }, 200);
 
   return (
     <Controller
@@ -53,7 +67,7 @@ export const CoinInput: React.FC<any> = ({
           ref={ref}
           getOptionLabel={(e) => e.ticker}
           getOptionValue={(e) => e.ticker}
-          loadOptions={loadOptions}
+          loadOptions={debouncedLoadOptions}
           onInputChange={handleInputChange}
           onChange={onChange}
           value={value}
