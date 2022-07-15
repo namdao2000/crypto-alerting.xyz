@@ -25,9 +25,15 @@
     font-size: 48px;
 }
 
-.Subtitle {
+.TitleSubtext {
     font-size: var(--smaller-font-size);
     margin-bottom: 10px;
+}
+
+.TitleSubtextMobile {
+    font-size: var(--smaller-font-size);
+    margin-bottom: 10px;
+    display: none;
 }
 
 .TrashButton {
@@ -40,6 +46,7 @@
 }
 
 .AlertsTableMobile {
+    min-width: 310px;
     padding: 20px;
     background-color: var(--primary-background);
     border-radius: 10px !important;
@@ -48,11 +55,22 @@
     display: none;
 }
 
+.AlertsSubtext {
+    font-size: var(--smaller-font-size);
+    margin-bottom: 10px;
+}
+
 @media (max-width: 600px) {
     .AlertsTable {
         display: none;
     }
     .AlertsTableMobile {
         display: block !important;
+    }
+    .TitleSubtext {
+        display: none;
+    }
+    .TitleSubtextMobile {
+        display: block;
     }
 }

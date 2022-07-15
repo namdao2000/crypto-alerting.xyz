@@ -63,7 +63,7 @@ export const AlertsComponent: React.FC<any> = ({
           <Grid xs={24}>
             <Grid.Container gap={2}>
               <Grid xs={24}>
-                <div className={styles.TitleSubtext}>
+                <div className={styles.AlertsSubtext}>
                   You have used {alerts.length} out of 15 free alerts.
                 </div>
               </Grid>
@@ -116,7 +116,7 @@ export const AlertsComponent: React.FC<any> = ({
               <Table.Column prop="remove" label="remove" />
             </Table>
           ) : (
-            <div className={styles.TitleSubtext}>
+            <div className={styles.TitleSubtextMobile}>
               You have no alerts. Let&apos;s create one!
             </div>
           )}

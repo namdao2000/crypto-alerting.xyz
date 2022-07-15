@@ -30,7 +30,6 @@ export const CoinInput: React.FC<any> = ({
       }
     );
     const d = response.json().then((data) => data);
-    console.log(d);
     return d;
   }, 200);
 
