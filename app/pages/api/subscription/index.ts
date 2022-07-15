@@ -27,7 +27,7 @@ export default async function handle(
         return;
       }
 
-      const schema = Joi.object({
+      let schema = Joi.object({
         alertType: Joi.string().required(),
         phone: Joi.string(),
         ticker: Joi.string().required(),
@@ -38,6 +38,18 @@ export default async function handle(
         notificationType: Joi.string().required(),
         lastAlerted: Joi.date().allow(null),
       });
+
+      if (body.alertType !== 'LISTING') {
+        schema = schema.keys({
+          threshold: Joi.number().required(),
+        });
+      }
+
+      if (body.notificationType == 'SMS') {
+        schema = schema.keys({
+          phone: Joi.string().required(),
+        });
+      }
 
       await validate(schema, body, res);
 
