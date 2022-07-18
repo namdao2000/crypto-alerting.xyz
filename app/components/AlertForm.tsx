@@ -63,7 +63,7 @@ export const AlertForm: React.FC<any> = () => {
   const onSubmit = handleSubmit(async (data) => {
     await createSubscription({
       ticker: data.coin.ticker,
-      threshold: parseInt(data.price) || undefined,
+      threshold: parseFloat(data.price) || undefined,
       alertType: data.alertType,
       exchange: data.exchange,
       disableAfterAlert: !data.keepAlertAfterTrigger,
